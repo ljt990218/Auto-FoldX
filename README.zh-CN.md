@@ -1,8 +1,12 @@
 # Auto Fold 📂
 
-[English Document](README.md)
+<div align="center">
+  <img src="./images/auto-foldx.png" alt="Auto Fold Logo" width="128" height="128">
+</div>
 
 一款强大的 VS Code 扩展，能够根据预配置的折叠级别自动折叠新打开的文件，帮助你更好地组织和浏览代码。
+
+[English Document](README.md)
 
 ## ✨ 特性
 

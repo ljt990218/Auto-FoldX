@@ -1,14 +1,24 @@
 {
-  "name": "auto-fold",
-  "displayName": "auto-fold",
+  "name": "auto-foldx",
+  "displayName": "auto-foldx",
+  "icon": "images/auto-foldx.png",
   "description": "A plug-in that opens new files and automatically folds files",
   "version": "1.0.0",
+  "publisher": "ljt990218",
   "engines": {
     "vscode": "^1.104.0"
   },
   "categories": [
     "Other"
   ],
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/ljt990218/auto-fold.git"
+  },
+  "bugs": {
+    "url": "https://github.com/ljt990218/auto-fold/issues"
+  },
+  "homepage": "https://github.com/ljt990218/auto-fold#readme",
   "activationEvents": [
     "onStartupFinished"
   ],

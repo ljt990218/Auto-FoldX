@@ -1,5 +1,9 @@
 # Auto Fold 📂
 
+<div align="center">
+  <img src="./images/auto-foldx.png" alt="Auto Fold Logo" width="128" height="128">
+</div>
+
 A powerful VS Code extension that automatically folds newly opened files according to preconfigured folding levels, helping you better organize and navigate your code.
 
 [中文文档](README.zh-CN.md)
