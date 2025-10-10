@@ -1,0 +1,79 @@
+{
+  "name": "auto-fold",
+  "displayName": "auto-fold",
+  "description": "A plug-in that opens new files and automatically folds files",
+  "version": "1.0.0",
+  "engines": {
+    "vscode": "^1.104.0"
+  },
+  "categories": [
+    "Other"
+  ],
+  "activationEvents": [
+    "onStartupFinished"
+  ],
+  "main": "./dist/extension.js",
+  "contributes": {
+    "commands": [
+      {
+        "command": "auto-fold.listFoldCommands",
+        "title": "List Fold Commands"
+      }
+    ],
+    "configuration": {
+      "type": "object",
+      "title": "Auto Fold",
+      "properties": {
+        "autoFold.foldLevelOnOpen": {
+          "type": "array",
+          "items": {
+            "type": "number",
+            "minimum": 1,
+            "maximum": 7
+          },
+          "default": [
+            1
+          ],
+          "description": "An array of fold levels to apply when a text editor is opened. Example: [1,2,3]. Empty or [0] disables automatic folding. Values must be integers between 1 and 7."
+        },
+        "autoFold.openDelayMs": {
+          "type": "number",
+          "default": 300,
+          "minimum": 0,
+          "maximum": 5000,
+          "description": "Delay in milliseconds to wait after a document open event before checking for the corresponding editor. Increase if editors are created slowly on your system."
+        }
+      }
+    }
+  },
+  "scripts": {
+    "vscode:prepublish": "pnpm run compile",
+    "compile": "pnpm run check-types && pnpm run lint && node esbuild.js",
+    "watch": "npm-run-all -p watch:*",
+    "watch:esbuild": "node esbuild.js --watch",
+    "watch:tsc": "tsc --noEmit --watch --project tsconfig.json",
+    "package": "pnpm run compile && pnpm vsce package --no-dependencies",
+    "publish": "pnpm vsce publish --no-dependencies",
+    "compile-tests": "tsc -p . --outDir out",
+    "watch-tests": "tsc -p . -w --outDir out",
+    "pretest": "pnpm run compile-tests && pnpm run compile && pnpm run lint",
+    "check-types": "tsc --noEmit",
+    "lint": "eslint src",
+    "lint:fix": "eslint --fix src",
+    "test": "vscode-test"
+  },
+  "devDependencies": {
+    "@types/mocha": "^10.0.10",
+    "@types/node": "22.x",
+    "@types/vscode": "^1.104.0",
+    "@typescript-eslint/eslint-plugin": "^8.45.0",
+    "@typescript-eslint/parser": "^8.45.0",
+    "@vscode/test-cli": "^0.0.11",
+    "@vscode/test-electron": "^2.5.2",
+    "esbuild": "^0.25.10",
+    "eslint": "^9.36.0",
+    "npm-run-all": "^4.1.5",
+    "typescript": "^5.9.3",
+    "vsce": "^2.15.0"
+  }
+}
