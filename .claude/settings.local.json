@@ -3,7 +3,10 @@
     "allow": [
       "Bash(pnpm run test:*)",
       "Bash(pnpm run lint:fix:*)",
-      "Bash(cat:*)"
+      "Bash(cat:*)",
+      "Bash(npm test)",
+      "Bash(npm run test:*)",
+      "Bash(node:*)"
     ],
     "deny": [],
     "ask": []
