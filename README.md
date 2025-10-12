@@ -64,6 +64,7 @@ Defines the delay time to wait before executing folding operations after files a
 ### Development Environment Setup
 
 1. Clone the repository and install dependencies:
+
 ```bash
 git clone https://github.com/yourusername/auto-fold.git
 cd auto-fold
@@ -76,21 +77,25 @@ pnpm install
 ### Available Development Commands
 
 - **Compile:**
+
   ```bash
   pnpm run compile
   ```
 
 - **Watch Mode:**
+
   ```bash
   pnpm run watch
   ```
 
 - **Linting:**
+
   ```bash
   pnpm run lint
   ```
 
 - **Type Checking:**
+
   ```bash
   pnpm run check-types
   ```
@@ -103,6 +108,7 @@ pnpm install
 ### Packaging and Publishing
 
 1. Package the extension:
+
    ```bash
    pnpm run package
    ```
@@ -113,6 +119,11 @@ pnpm install
    ```
 
 > **Note:** Please ensure you have updated the version number and passed all tests before publishing.
+
+## 🎯 To-do
+
+- ◽ Get editor folding code shortcut key configuration
+- ◽ Support different folding configurations corresponding to different files
 
 ## 🤝 Contribution Guidelines
 

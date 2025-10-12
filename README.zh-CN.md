@@ -64,6 +64,7 @@
 ### 开发环境设置
 
 1. 克隆仓库并安装依赖：
+
 ```bash
 git clone https://github.com/yourusername/auto-fold.git
 cd auto-fold
@@ -76,21 +77,25 @@ pnpm install
 ### 可用的开发命令
 
 - **编译：**
+
   ```bash
   pnpm run compile
   ```
 
 - **监听模式：**
+
   ```bash
   pnpm run watch
   ```
 
 - **代码检查：**
+
   ```bash
   pnpm run lint
   ```
 
 - **类型检查：**
+
   ```bash
   pnpm run check-types
   ```
@@ -103,6 +108,7 @@ pnpm install
 ### 打包和发布
 
 1. 打包扩展：
+
    ```bash
    pnpm run package
    ```
@@ -113,6 +119,11 @@ pnpm install
    ```
 
 > **注意：** 发布前请确保已更新版本号并通过所有测试。
+
+## 🎯 待办
+
+- ◽ 获取编辑器折叠代码快捷键配置
+- ◽ 支持不同文件对应不同折叠配置
 
 ## 🤝 贡献指南
 
