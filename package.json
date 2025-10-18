@@ -3,7 +3,7 @@
   "displayName": "auto-foldx",
   "icon": "images/auto-foldx.png",
   "description": "A plug-in that opens new files and automatically folds files",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "publisher": "ljt990218",
   "engines": {
     "vscode": "^1.86.1"
