@@ -42,7 +42,9 @@
             "maximum": 7
           },
           "default": [
-            1
+            1,
+            2,
+            3
           ],
           "description": "An array of fold levels to apply when a text editor is opened. Example: [1,2,3]. Empty or [0] disables automatic folding. Values must be integers between 1 and 7."
         },

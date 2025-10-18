@@ -20,11 +20,11 @@ A powerful VS Code extension that automatically folds newly opened files accordi
 
 1. Open VS Code
 2. Press `Cmd+P` (macOS) or `Ctrl+P` (Windows/Linux) to open the command palette
-3. Type `ext install auto-fold` and press Enter
+3. Type `ext install auto-foldx` and press Enter
 4. Click the "Install" button to install the extension
 5. Reload VS Code to activate the extension
 
-Alternatively, you can visit the [VS Code Marketplace](https://marketplace.visualstudio.com/items?itemName=auto-fold) to install this extension directly.
+Alternatively, you can visit the [VS Code Marketplace](https://marketplace.visualstudio.com/items?itemName=ljt990218.auto-foldx) to install this extension directly.
 
 ## ⚙️ Configuration
 

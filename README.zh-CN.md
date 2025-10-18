@@ -20,11 +20,11 @@
 
 1. 打开 VS Code
 2. 按下 `Cmd+P` (macOS) 或 `Ctrl+P` (Windows/Linux) 打开命令面板
-3. 输入 `ext install auto-fold` 并按回车
+3. 输入 `ext install auto-foldx` 并按回车
 4. 点击 "Install" 按钮安装扩展
 5. 重新加载 VS Code 使扩展生效
 
-或者，您也可以直接访问 [VS Code Marketplace](https://marketplace.visualstudio.com/items?itemName=auto-fold) 安装本扩展。
+或者，您也可以直接访问 [VS Code Marketplace](https://marketplace.visualstudio.com/items?itemName=ljt990218.auto-foldx) 安装本扩展。
 
 ## ⚙️ 配置
 
