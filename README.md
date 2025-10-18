@@ -160,6 +160,10 @@ We welcome all forms of contributions, including but not limited to:
 - ⚙️ Added custom configuration options
 - 📚 Completed basic documentation
 
+### 1.0.1 (2025-10-18)
+
+- 🔧 Improved engine compatibility
+
 ## 📄 License
 
 This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details
