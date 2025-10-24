@@ -7,7 +7,11 @@
       "Bash(npm test)",
       "Bash(npm run test:*)",
       "Bash(node:*)",
-      "WebFetch(domain:github.com)"
+      "WebFetch(domain:github.com)",
+      "Bash(pnpm install:*)",
+      "Bash(pnpm run check-types:*)",
+      "Bash(pnpm run lint:*)",
+      "Bash(pnpm run compile:*)"
     ],
     "deny": [],
     "ask": []

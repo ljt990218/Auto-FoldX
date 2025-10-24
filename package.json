@@ -35,22 +35,137 @@
       "title": "Auto Fold",
       "properties": {
         "autoFold.foldLevelOnOpen": {
-          "type": "array",
-          "items": {
-            "type": "number",
-            "minimum": 1,
-            "maximum": 7
-          },
-          "default": [
-            1,
-            2,
-            3
+          "oneOf": [
+            {
+              "type": "array",
+              "items": {
+                "type": "number",
+                "minimum": 1,
+                "maximum": 7
+              },
+              "description": "An array of fold levels to apply when a text editor is opened. Example: [1,2,3]. Empty or [0] disables automatic folding. Values must be integers between 1 and 7."
+            },
+            {
+              "type": "object",
+              "properties": {
+                "default": {
+                  "type": "array",
+                  "items": {
+                    "type": "number",
+                    "minimum": 1,
+                    "maximum": 7
+                  },
+                  "default": [
+                    2,
+                    3
+                  ],
+                  "description": "Default fold levels for files that don't match any specific patterns."
+                },
+                "patterns": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "pattern": {
+                        "type": "string",
+                        "description": "File pattern (glob syntax) or file extension with dot. Examples: '.ts', '.js', '.vue', '.tsx', '.py', '.json'"
+                      },
+                      "foldLevels": {
+                        "type": "array",
+                        "items": {
+                          "type": "number",
+                          "minimum": 1,
+                          "maximum": 7
+                        },
+                        "description": "Fold levels to apply to files matching this pattern."
+                      }
+                    },
+                    "required": [
+                      "pattern",
+                      "foldLevels"
+                    ]
+                  },
+                  "description": "Array of file-specific fold level configurations."
+                }
+              },
+              "required": [
+                "default"
+              ],
+              "description": "Advanced configuration allowing different fold levels for different file types."
+            }
           ],
-          "description": "An array of fold levels to apply when a text editor is opened. Example: [1,2,3]. Empty or [0] disables automatic folding. Values must be integers between 1 and 7."
+          "default": {
+            "default": [
+              2,
+              3
+            ],
+            "patterns": [
+              {
+                "pattern": ".vue",
+                "foldLevels": [
+                  2,
+                  3,
+                  4,
+                  5
+                ]
+              },
+              {
+                "pattern": ".tsx",
+                "foldLevels": [
+                  2,
+                  3,
+                  4,
+                  5
+                ]
+              },
+              {
+                "pattern": ".jsx",
+                "foldLevels": [
+                  2,
+                  3,
+                  4,
+                  5
+                ]
+              },
+              {
+                "pattern": ".ts",
+                "foldLevels": [
+                  2,
+                  3,
+                  4
+                ]
+              },
+              {
+                "pattern": ".js",
+                "foldLevels": [
+                  2,
+                  3,
+                  4
+                ]
+              },
+              {
+                "pattern": ".py",
+                "foldLevels": [
+                  2,
+                  3,
+                  4
+                ]
+              },
+              {
+                "pattern": ".json",
+                "foldLevels": [
+                  2,
+                  3,
+                  4
+                ]
+              }
+            ]
+          },
+          "description": "Fold levels configuration. Can be either a simple array for all files, or an object with file-specific patterns."
         },
         "autoFold.openDelayMs": {
           "type": "number",
-          "default": 300,
+          "default": 250,
           "minimum": 0,
           "maximum": 5000,
           "description": "Delay in milliseconds to wait after a document open event before checking for the corresponding editor. Increase if editors are created slowly on your system."
@@ -73,6 +188,9 @@
     "lint": "eslint src",
     "lint:fix": "eslint --fix src",
     "test": "vscode-test"
+  },
+  "dependencies": {
+    "minimatch": "^9.0.3"
   },
   "devDependencies": {
     "@types/mocha": "^10.0.10",

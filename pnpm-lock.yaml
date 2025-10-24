@@ -7,6 +7,10 @@ settings:
 importers:
 
   .:
+    dependencies:
+      minimatch:
+        specifier: ^9.0.3
+        version: 9.0.5
     devDependencies:
       '@types/mocha':
         specifier: ^10.0.10

@@ -28,19 +28,25 @@ suite('Auto Fold Extension Test Suite', () => {
   test('Configuration defaults should be correct', () => {
     const config = vscode.workspace.getConfiguration('autoFold')
 
-    // Test foldLevelOnOpen default
-    const foldLevels = config.get<number[]>('foldLevelOnOpen')
-    assert.deepStrictEqual(foldLevels, [1])
+    // Test foldLevelOnOpen default (now an object with patterns)
+    const foldLevelConfig = config.get<any>('foldLevelOnOpen')
+    console.log('Actual default config:', JSON.stringify(foldLevelConfig, null, 2))
+
+    assert.ok(foldLevelConfig && typeof foldLevelConfig === 'object', 'foldLevelOnOpen should be an object')
+    assert.ok(foldLevelConfig.default, 'should have default property')
+    assert.deepStrictEqual(foldLevelConfig.default, [2, 3], 'default should be [2, 3]')
+    assert.ok(Array.isArray(foldLevelConfig.patterns), 'patterns should be an array')
+    assert.ok(foldLevelConfig.patterns.length > 0, 'patterns should not be empty')
 
     // Test openDelayMs default
     const openDelay = config.get<number>('openDelayMs')
-    assert.strictEqual(openDelay, 300)
+    assert.strictEqual(openDelay, 250, 'openDelayMs should be 250')
   })
 
   test('Configuration should accept valid values', async () => {
     const config = vscode.workspace.getConfiguration('autoFold')
 
-    // Test setting fold levels
+    // Test setting fold levels with simple array (backward compatibility)
     await config.update('foldLevelOnOpen', [1, 2, 3], vscode.ConfigurationTarget.Global)
     const foldLevels = config.get<number[]>('foldLevelOnOpen')
     assert.deepStrictEqual(foldLevels, [1, 2, 3])
@@ -50,9 +56,12 @@ suite('Auto Fold Extension Test Suite', () => {
     const openDelay = config.get<number>('openDelayMs')
     assert.strictEqual(openDelay, 500)
 
-    // Reset to defaults
-    await config.update('foldLevelOnOpen', [1], vscode.ConfigurationTarget.Global)
-    await config.update('openDelayMs', 300, vscode.ConfigurationTarget.Global)
+    // Reset to default object structure
+    await config.update('foldLevelOnOpen', {
+      default: [2, 3],
+      patterns: []
+    }, vscode.ConfigurationTarget.Global)
+    await config.update('openDelayMs', 250, vscode.ConfigurationTarget.Global)
   })
 
   test('Configuration should normalize invalid values', async () => {
@@ -299,6 +308,141 @@ const y = 2;`,
       // This is more of a structural test
       assert.ok(typeof extension.exports === 'object', 'Extension should export something')
     }
+  })
+
+  test('Should handle file-specific configuration with extensions', async () => {
+    const config = vscode.workspace.getConfiguration('autoFold')
+
+    // Test file-specific configuration
+    const fileSpecificConfig = {
+      default: [1, 2],
+      patterns: [
+        { pattern: '.ts', foldLevels: [2, 3, 4] },
+        { pattern: '.js', foldLevels: [1, 2] },
+        { pattern: '.json', foldLevels: [1] }
+      ]
+    }
+
+    await config.update('foldLevelOnOpen', fileSpecificConfig, vscode.ConfigurationTarget.Global)
+
+    const updatedConfig = config.get<any>('foldLevelOnOpen')
+    assert.deepStrictEqual(updatedConfig.default, [1, 2])
+    assert.strictEqual(updatedConfig.patterns.length, 3)
+    assert.deepStrictEqual(updatedConfig.patterns[0], { pattern: '.ts', foldLevels: [2, 3, 4] })
+
+    // Reset to defaults
+    await config.update('foldLevelOnOpen', {
+      default: [2, 3],
+      patterns: []
+    }, vscode.ConfigurationTarget.Global)
+  })
+
+  test('Should handle file-specific configuration with glob patterns', async () => {
+    const config = vscode.workspace.getConfiguration('autoFold')
+
+    // Test glob patterns
+    const globConfig = {
+      default: [1],
+      patterns: [
+        { pattern: '**/*.ts', foldLevels: [2, 3] },
+        { pattern: 'src/**/*.js', foldLevels: [1, 2, 3] },
+        { pattern: 'test/*.spec.js', foldLevels: [1] }
+      ]
+    }
+
+    await config.update('foldLevelOnOpen', globConfig, vscode.ConfigurationTarget.Global)
+
+    const updatedConfig = config.get<any>('foldLevelOnOpen')
+    assert.strictEqual(updatedConfig.patterns.length, 3)
+    assert.deepStrictEqual(updatedConfig.patterns[0], { pattern: '**/*.ts', foldLevels: [2, 3] })
+
+    // Reset to defaults
+    await config.update('foldLevelOnOpen', {
+      default: [2, 3],
+      patterns: []
+    }, vscode.ConfigurationTarget.Global)
+  })
+
+  test('Should handle configuration changes during runtime with file-specific settings', async () => {
+    const config = vscode.workspace.getConfiguration('autoFold')
+
+    // Start with simple configuration
+    await config.update('foldLevelOnOpen', [1], vscode.ConfigurationTarget.Global)
+
+    // Create a TypeScript document
+    const tsDoc = await vscode.workspace.openTextDocument({
+      content: `// TypeScript file
+class TestClass {
+  method() {
+    if (true) {
+      console.log("test");
+    }
+  }
+}`,
+      language: 'typescript'
+    })
+
+    await vscode.window.showTextDocument(tsDoc)
+    await new Promise(resolve => setTimeout(resolve, 150))
+
+    // Change to file-specific configuration
+    const fileSpecificConfig = {
+      default: [1],
+      patterns: [
+        { pattern: '.ts', foldLevels: [1, 2, 3] }
+      ]
+    }
+
+    await config.update('foldLevelOnOpen', fileSpecificConfig, vscode.ConfigurationTarget.Global)
+    await new Promise(resolve => setTimeout(resolve, 200))
+
+    // Clean up
+    await vscode.commands.executeCommand('workbench.action.closeActiveEditor')
+
+    // Reset to defaults
+    await config.update('foldLevelOnOpen', {
+      default: [2, 3],
+      patterns: []
+    }, vscode.ConfigurationTarget.Global)
+  })
+
+  test('Should validate file extension pattern format', async () => {
+    const config = vscode.workspace.getConfiguration('autoFold')
+
+    // Test with valid extensions (with dots)
+    const validConfig = {
+      default: [1],
+      patterns: [
+        { pattern: '.ts', foldLevels: [2] },
+        { pattern: '.js', foldLevels: [1] },
+        { pattern: '.json', foldLevels: [1] }
+      ]
+    }
+
+    await config.update('foldLevelOnOpen', validConfig, vscode.ConfigurationTarget.Global)
+    const updatedConfig = config.get<any>('foldLevelOnOpen')
+    assert.strictEqual(updatedConfig.patterns.length, 3)
+
+    // Test with mixed valid and invalid patterns
+    const mixedConfig = {
+      default: [1],
+      patterns: [
+        { pattern: '.ts', foldLevels: [2] },      // Valid
+        { pattern: 'ts', foldLevels: [2] },       // Invalid (no dot) - should work as glob
+        { pattern: '**/*.js', foldLevels: [1] },  // Valid glob
+        { pattern: '.json', foldLevels: [1] }     // Valid
+      ]
+    }
+
+    await config.update('foldLevelOnOpen', mixedConfig, vscode.ConfigurationTarget.Global)
+    const mixedUpdatedConfig = config.get<any>('foldLevelOnOpen')
+    assert.strictEqual(mixedUpdatedConfig.patterns.length, 4)
+
+    // Reset to defaults
+    await config.update('foldLevelOnOpen', {
+      default: [2, 3],
+      patterns: []
+    }, vscode.ConfigurationTarget.Global)
   })
 
   test('Should test concurrent folding prevention mechanism', async () => {

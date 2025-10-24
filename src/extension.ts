@@ -1,4 +1,5 @@
 import * as vscode from 'vscode'
+import { minimatch } from 'minimatch'
 
 // Constants
 const FOLD_LEVEL_MIN = 1
@@ -8,8 +9,18 @@ const MAX_OPEN_DELAY = 5000
 
 // Type definitions
 interface AutoFoldConfig {
-  foldLevelOnOpen: number | number[]
+  foldLevelOnOpen: number | number[] | FilePatternConfig
   openDelayMs: number
+}
+
+interface FilePatternConfig {
+  default: number[]
+  patterns?: FilePattern[]
+}
+
+interface FilePattern {
+  pattern: string
+  foldLevels: number[]
 }
 
 interface FoldingPromise {
@@ -43,37 +54,86 @@ export function activate(context: vscode.ExtensionContext) {
   // Prevent concurrent folding on same document: store ongoing folding Promises
   const foldingPromises = new Map<string, Promise<void>>()
 
-  // Get configured fold levels as number array (range 1..7).
-  // Config key `autoFold.foldLevelOnOpen` expects number[] (e.g. [2,4,1]).
-  // Values <= 0 are ignored. Provides fallback for single number config.
-  function getConfiguredFoldLevels(): number[] {
+  
+  // Get configured fold levels for a specific file (range 1..7).
+  // Config key `autoFold.foldLevelOnOpen` can be:
+  // - number[]: simple array for all files
+  // - number: single number for all files (fallback)
+  // - FilePatternConfig: object with default and file-specific patterns
+  function getConfiguredFoldLevels(filePath?: string): number[] {
     const cfg = vscode.workspace.getConfiguration('autoFold')
-    const raw = cfg.get<number | number[]>('foldLevelOnOpen', [1])
-    let arr: number[] = []
+    const raw = cfg.get<number | number[] | FilePatternConfig>('foldLevelOnOpen', [1])
 
+    // Handle simple array or number configuration (backward compatibility)
     if (Array.isArray(raw)) {
-      arr = raw
+      return normalizeFoldLevels(raw)
     } else if (typeof raw === 'number') {
-      // Fallback: single number -> convert to array
-      arr = [raw]
-    } else {
-      // Unknown type, fallback to default
-      arr = [1]
+      return normalizeFoldLevels([raw])
     }
 
-    // Normalize: convert to integers, limit to 0..7, keep only >0 values (0 disables folding)
-    const levels: number[] = arr
+    // Handle advanced FilePatternConfig
+    if (typeof raw === 'object' && raw !== null && 'default' in raw) {
+      const config = raw as FilePatternConfig
+
+      // If no file path provided, return default levels
+      if (!filePath) {
+        logger.info('No file path provided, using default fold levels ->', config.default)
+        return normalizeFoldLevels(config.default)
+      }
+
+      // Try to match against patterns
+      if (config.patterns && config.patterns.length > 0) {
+        for (const pattern of config.patterns) {
+          if (matchesPattern(filePath, pattern.pattern)) {
+            logger.info(`File ${filePath} matches pattern "${pattern.pattern}", using fold levels ->`, pattern.foldLevels)
+            return normalizeFoldLevels(pattern.foldLevels)
+          }
+        }
+      }
+
+      // No pattern matched, use default
+      logger.info(`File ${filePath} doesn't match any pattern, using default fold levels ->`, config.default)
+      return normalizeFoldLevels(config.default)
+    }
+
+    // Unknown type, fallback to default
+    logger.warn('Unknown foldLevelOnOpen configuration type, using default [1]')
+    return normalizeFoldLevels([1])
+  }
+
+  // Normalize fold levels: convert to integers, limit to 1..7, filter out invalid values
+  function normalizeFoldLevels(levels: number[]): number[] {
+    return levels
       .map((v) => {
         const n = typeof v === 'number' ? Math.floor(v) : NaN
         if (Number.isNaN(n)) {
           return -1
         }
-        return Math.max(0, Math.min(FOLD_LEVEL_MAX, n))
+        return Math.max(1, Math.min(FOLD_LEVEL_MAX, n))
       })
       .filter((n) => n > 0)
+  }
 
-    logger.info('Configured fold levels ->', levels)
-    return levels
+  // Check if a file path matches a pattern
+  function matchesPattern(filePath: string, pattern: string): boolean {
+    // If pattern doesn't contain wildcards, treat as file extension
+    if (!pattern.includes('*') && !pattern.includes('?') && !pattern.includes('[')) {
+      // Pattern must start with dot for file extension matching
+      if (!pattern.startsWith('.')) {
+        logger.warn(`File extension pattern "${pattern}" should start with a dot (e.g., ".ts"), treating as glob pattern`)
+        // Fall through to glob pattern matching
+      } else {
+        const ext = pattern.slice(1).toLowerCase()
+        const fileExt = filePath.split('.').pop()?.toLowerCase()
+        return fileExt === ext
+      }
+    }
+
+    // Use minimatch for glob patterns
+    return minimatch(filePath, pattern, {
+      nocase: true,
+      dot: true
+    })
   }
 
   function getOpenDelayMs(): number {
@@ -218,7 +278,7 @@ export function activate(context: vscode.ExtensionContext) {
       return
     }
 
-    const levels = getConfiguredFoldLevels()
+    const levels = getConfiguredFoldLevels(editor.document.uri.fsPath)
     if (!levels || levels.length === 0) {
       logger.info('Automatic folding disabled (no configured levels)')
       return
@@ -284,7 +344,8 @@ export function activate(context: vscode.ExtensionContext) {
   // Respond to configuration changes
   const configDisposable = vscode.workspace.onDidChangeConfiguration((e) => {
     if (e.affectsConfiguration('autoFold.foldLevelOnOpen')) {
-      logger.info('foldLevelOnOpen changed, applying to active editor')
+      logger.info('foldLevelOnOpen changed, clearing folded documents cache')
+      foldedDocs.clear() // Clear cache to reapply new configuration
       applyFoldToEditor(vscode.window.activeTextEditor)
     }
   })
