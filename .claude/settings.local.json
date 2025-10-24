@@ -11,7 +11,10 @@
       "Bash(pnpm install:*)",
       "Bash(pnpm run check-types:*)",
       "Bash(pnpm run lint:*)",
-      "Bash(pnpm run compile:*)"
+      "Bash(pnpm run compile:*)",
+      "Bash(pnpm run package:*)",
+      "Bash(npx vsce ls:*)",
+      "Bash(unzip:*)"
     ],
     "deny": [],
     "ask": []
