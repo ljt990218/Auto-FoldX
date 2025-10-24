@@ -32,16 +32,59 @@ The extension provides the following configuration options:
 
 ### `autoFold.foldLevelOnOpen`
 
-Defines the array of folding levels to apply when files are opened.
+Defines the folding level configuration to apply when files are opened. Supports two configuration modes:
+
+**Mode 1: Simple Array Configuration (applies to all files)**
 
 - Type: `number[]`
-- Default: `[1]`
+- Default: `[2, 3]`
 - Range: `1-7`
 - Examples:
   - `[1]` - Fold only the first level
   - `[1, 2]` - Fold the first and second levels
   - `[1, 2, 3]` - Fold the first three levels
   - `[]` or `[0]` - Disable auto folding
+
+**Mode 2: Object Configuration (different folding levels for different file types)**
+
+```json
+{
+  "default": [2, 3],
+  "patterns": [
+    {
+      "pattern": ".vue",
+      "foldLevels": [2, 3, 4, 5]
+    },
+    {
+      "pattern": ".tsx",
+      "foldLevels": [2, 3, 4, 5]
+    },
+    {
+      "pattern": ".jsx",
+      "foldLevels": [2, 3, 4, 5]
+    },
+    {
+      "pattern": ".ts",
+      "foldLevels": [2, 3, 4]
+    },
+    {
+      "pattern": ".js",
+      "foldLevels": [2, 3, 4]
+    },
+    {
+      "pattern": ".py",
+      "foldLevels": [2, 3, 4]
+    },
+    {
+      "pattern": ".json",
+      "foldLevels": [2, 3, 4]
+    }
+  ]
+}
+```
+
+- **default**: Default folding levels for files that don't match any specific patterns
+- **patterns**: Array of file patterns, supports glob syntax or file extensions (like `.ts`, `.js`, `.vue`)
 
 ### `autoFold.openDelayMs`
 
@@ -122,7 +165,7 @@ pnpm install
 
 ## 🎯 To-do
 
-- ◽ Support different folding configurations corresponding to different files
+- ✅ Support different folding configurations corresponding to different files
 
 ## 🤝 Contribution Guidelines
 
@@ -162,6 +205,10 @@ We welcome all forms of contributions, including but not limited to:
 ### 1.0.1 (2025-10-18)
 
 - 🔧 Improved engine compatibility
+
+### 1.1.0 (2025-10-24)
+
+- ✨ Added support for multiple folding levels
 
 ## 📄 License
 

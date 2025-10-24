@@ -32,16 +32,59 @@
 
 ### `autoFold.foldLevelOnOpen`
 
-定义文件打开时要应用的折叠级别数组。
+定义文件打开时要应用的折叠级别配置。支持两种配置方式：
+
+**方式一：简单数组配置（适用于所有文件）**
 
 - 类型：`number[]`
-- 默认值：`[1]`
+- 默认值：`[2, 3]`
 - 取值范围：`1-7`
 - 示例：
   - `[1]` - 只折叠第一级
   - `[1, 2]` - 折叠第一级和第二级
   - `[1, 2, 3]` - 折叠前三级
   - `[]` 或 `[0]` - 禁用自动折叠
+
+**方式二：对象配置（为不同文件类型设置不同折叠级别）**
+
+```json
+{
+  "default": [2, 3],
+  "patterns": [
+    {
+      "pattern": ".vue",
+      "foldLevels": [2, 3, 4, 5]
+    },
+    {
+      "pattern": ".tsx",
+      "foldLevels": [2, 3, 4, 5]
+    },
+    {
+      "pattern": ".jsx",
+      "foldLevels": [2, 3, 4, 5]
+    },
+    {
+      "pattern": ".ts",
+      "foldLevels": [2, 3, 4]
+    },
+    {
+      "pattern": ".js",
+      "foldLevels": [2, 3, 4]
+    },
+    {
+      "pattern": ".py",
+      "foldLevels": [2, 3, 4]
+    },
+    {
+      "pattern": ".json",
+      "foldLevels": [2, 3, 4]
+    }
+  ]
+}
+```
+
+- **default**: 未匹配特定模式的文件的默认折叠级别
+- **patterns**: 文件模式数组，支持 glob 语法或文件扩展名（如 `.ts`, `.js`, `.vue`）
 
 ### `autoFold.openDelayMs`
 
@@ -109,20 +152,21 @@ pnpm install
 
 1. 打包扩展：
 
-   ```bash
-   pnpm run package
-   ```
+```bash
+pnpm run package
+```
 
 2. 发布扩展：
-   ```bash
-   pnpm run publish
-   ```
+
+```bash
+pnpm run publish
+```
 
 > **注意：** 发布前请确保已更新版本号并通过所有测试。
 
 ## 🎯 待办
 
-- ◽ 支持不同文件对应不同折叠配置
+- ✅ 支持不同文件对应不同折叠配置
 
 ## 🤝 贡献指南
 
@@ -162,6 +206,10 @@ pnpm install
 ### 1.0.1 (2025-10-18)
 
 - 🔧 改进引擎兼容性
+
+### 1.1.0 (2025-10-24)
+
+- ✨ 新增对不同文件类型对应不同折叠级别的支持
 
 ## 📄 许可证
 
