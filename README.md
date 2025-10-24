@@ -122,7 +122,6 @@ pnpm install
 
 ## 🎯 To-do
 
-- ◽ Get editor folding code shortcut key configuration
 - ◽ Support different folding configurations corresponding to different files
 
 ## 🤝 Contribution Guidelines
