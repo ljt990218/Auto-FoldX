@@ -3,7 +3,7 @@
   "displayName": "auto-foldx",
   "icon": "images/auto-foldx.png",
   "description": "A plug-in that opens new files and automatically folds files",
-  "version": "1.0.1",
+  "version": "1.1.0",
   "publisher": "ljt990218",
   "engines": {
     "vscode": "^1.86.1"
@@ -181,6 +181,7 @@
     "watch:tsc": "tsc --noEmit --watch --project tsconfig.json",
     "package": "pnpm run compile && pnpm vsce package --no-dependencies",
     "publish": "pnpm vsce publish --no-dependencies",
+    "publish:ovsx": "pnpm run compile && source .env && pnpm ovsx publish --no-dependencies --pat $OPEN_VSX_PAT",
     "compile-tests": "tsc -p . --outDir out",
     "watch-tests": "tsc -p . -w --outDir out",
     "pretest": "pnpm run compile-tests && pnpm run compile && pnpm run lint",
@@ -203,6 +204,7 @@
     "esbuild": "^0.25.10",
     "eslint": "^9.36.0",
     "npm-run-all": "^4.1.5",
+    "ovsx": "^0.8.4",
     "typescript": "^5.9.3",
     "vsce": "^2.15.0"
   }
