@@ -86,30 +86,15 @@ export function activate(context: vscode.ExtensionContext) {
   }
 
   // Cache for available fold commands to avoid repeated lookups
-  let availableFoldCommands: Set<string> | null = null
-  
-  // Predefined fold level commands for better performance
-  const FOLD_LEVEL_COMMANDS = new Set(
-    Array.from({ length: FOLD_LEVEL_MAX }, (_, i) => `editor.foldLevel${i + 1}`)
-  )
+  let availableFoldCommands: string[] | null = null
 
-  async function getAvailableFoldCommands(): Promise<Set<string>> {
+  async function getAvailableFoldCommands(): Promise<string[]> {
     if (availableFoldCommands) {
       return availableFoldCommands
     }
 
-    try {
-      const all = await vscode.commands.getCommands(true)
-      // Use Set for faster lookups
-      availableFoldCommands = new Set(
-        all.filter(cmd => FOLD_LEVEL_COMMANDS.has(cmd))
-      )
-    } catch (error) {
-      logger.error('Failed to get available commands', error)
-      // Fallback to predefined commands if we can't get the actual list
-      availableFoldCommands = new Set(FOLD_LEVEL_COMMANDS)
-    }
-    
+    const all = await vscode.commands.getCommands(true)
+    availableFoldCommands = all.filter((c) => /editor\.foldLevel\d+/.test(c))
     return availableFoldCommands
   }
 
@@ -188,7 +173,7 @@ export function activate(context: vscode.ExtensionContext) {
 
       for (const level of levels) {
         const cmd = `editor.foldLevel${level}`
-        if (!commands.has(cmd)) {
+        if (!commands.includes(cmd)) {
           logger.warn(`Command ${cmd} not available, skipping`)
           continue
         }
@@ -307,8 +292,8 @@ export function activate(context: vscode.ExtensionContext) {
 
   // Debug command: list editor.foldLevel* commands and potential contributors
   const listFoldDisposable = vscode.commands.registerCommand('auto-fold.listFoldCommands', async () => {
-    const commands = await getAvailableFoldCommands()
-    const foldCmds = Array.from(commands)
+    const all = await vscode.commands.getCommands(true)
+    const foldCmds = all.filter((c) => /editor\.foldLevel\d+/.test(c))
     logger.info('Found fold commands ->', foldCmds)
 
     // Search for contributes.commands entries in installed extensions
