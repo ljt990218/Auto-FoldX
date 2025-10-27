@@ -14,7 +14,9 @@
       "Bash(pnpm run compile:*)",
       "Bash(pnpm run package:*)",
       "Bash(npx vsce ls:*)",
-      "Bash(unzip:*)"
+      "Bash(unzip:*)",
+      "Bash(git tag:*)",
+      "Bash(git push:*)"
     ],
     "deny": [],
     "ask": []

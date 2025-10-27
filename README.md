@@ -210,6 +210,10 @@ We welcome all forms of contributions, including but not limited to:
 
 - ✨ Added support for multiple folding levels
 
+### 1.1.1 (2025-10-27)
+
+- 🔧 Fixed extension configuration tips
+
 ## 📄 License
 
 This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details
