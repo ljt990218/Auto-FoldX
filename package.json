@@ -13,12 +13,12 @@
   ],
   "repository": {
     "type": "git",
-    "url": "https://github.com/ljt990218/auto-fold.git"
+    "url": "https://github.com/ljt990218/auto-foldx.git"
   },
   "bugs": {
-    "url": "https://github.com/ljt990218/auto-fold/issues"
+    "url": "https://github.com/ljt990218/auto-foldx/issues"
   },
-  "homepage": "https://github.com/ljt990218/auto-fold#readme",
+  "homepage": "https://github.com/ljt990218/auto-foldx#readme",
   "activationEvents": [
     "onStartupFinished"
   ],
@@ -179,8 +179,7 @@
     "watch": "npm-run-all -p watch:*",
     "watch:esbuild": "node esbuild.js --watch",
     "watch:tsc": "tsc --noEmit --watch --project tsconfig.json",
-    "package": "pnpm run compile && pnpm vsce package --no-dependencies",
-    "publish": "pnpm vsce publish --no-dependencies",
+    "publish": "pnpm run compile && pnpm vsce publish --no-dependencies",
     "publish:ovsx": "pnpm run compile && source .env && pnpm ovsx publish --no-dependencies --pat $OPEN_VSX_PAT",
     "compile-tests": "tsc -p . --outDir out",
     "watch-tests": "tsc -p . -w --outDir out",
